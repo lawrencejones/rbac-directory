@@ -52,6 +52,7 @@ type SecretsInjectorOptions struct {
 	ServiceAccountTokenFile     string           // mount path of our projected service account token
 	ServiceAccountTokenExpiry   time.Duration    // Kubelet expiry for the service account token
 	ServiceAccountTokenAudience string           // optional token audience
+	Timeout                     time.Duration    // timeout to use when reading secrets from Vault
 }
 
 var (
@@ -324,6 +325,7 @@ func (i podInjector) configureContainer(reference corev1.Container, containerCon
 
 	args := []string{"exec"}
 	args = append(args, "--vault-address", i.Address)
+	args = append(args, "--vault-http-timeout", i.Timeout.String())
 	args = append(args, "--vault-path-prefix", secretMountPathPrefix)
 	args = append(args, "--auth-backend-mount-path", i.AuthMountPath)
 	args = append(args, "--auth-backend-role", i.AuthRole)

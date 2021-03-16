@@ -29,6 +29,8 @@ var (
 	vaultConfigMapName      = app.Flag("vault-configmap-name", "Vault configMap name containing vault configuration").Default("vault-config").String()
 	vaultConfigMapNamespace = app.Flag("vault-configmap-namespace", "Namespace of vault configMap").Default("vault-system").String()
 
+	theatreSecretsTimeout = app.Flag("theatre-secrets-timeout", "Timeout that theatre-secrets should use when communicating with Vault").Default("10s").Duration()
+
 	// These configuration parameters alter how the injector mounts service account tokens.
 	// We expect tokens to be sent to Vault, outside of the Kubernetes cluster, so we ensure
 	// the tokens used are short-lived in case they are exposed.
@@ -71,6 +73,7 @@ func main() {
 		ServiceAccountTokenFile:     *serviceAccountTokenFile,
 		ServiceAccountTokenExpiry:   *serviceAccountTokenExpiry,
 		ServiceAccountTokenAudience: *serviceAccountTokenAudience,
+		Timeout:                     *theatreSecretsTimeout,
 	}
 
 	mgr.GetWebhookServer().Register("/mutate-pods", &admission.Webhook{
